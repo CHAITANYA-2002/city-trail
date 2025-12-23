@@ -211,6 +211,24 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Make map tiles a bit more colorful */
+  .leaflet-container .saturated-tiles {
+    filter: saturate(1.35) contrast(1.05);
+  }
+
+  /* Small helper classes for marker icons */
+  .map-marker-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    border: 2px solid white;
+  }
   
   /* Safe area insets for notched devices */
   .safe-area-inset-bottom {

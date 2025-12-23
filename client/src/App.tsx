@@ -1,29 +1,25 @@
-import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Routes, Route } from "react-router-dom";
 import Home from "@/pages/Home";
+import CitySelectionPage from "@/pages/CitySelectionPage";
+import TripPreferencePage from "@/pages/TripPreferencePage";
+import ItineraryPage from "@/pages/ItineraryPage";
+import MapPage from "@/pages/MapPage";
 import NotFound from "@/pages/not-found";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/toaster";
 
-function Router() {
+export default function App() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route component={NotFound} />
-    </Switch>
+    <TooltipProvider>
+      <Toaster />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/cities" element={<CitySelectionPage />} />
+        <Route path="/trip" element={<TripPreferencePage />} />
+        <Route path="/itinerary" element={<ItineraryPage />} />
+        <Route path="/map" element={<MapPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </TooltipProvider>
   );
 }
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
-}
-
-export default App;

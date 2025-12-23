@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { Compass, Heart, Route, User } from "lucide-react";
+import { Compass, Heart, Route, User, MapPin } from "lucide-react";
 
-type TabType = "explore" | "saved" | "routes" | "profile";
+type TabType = "explore" | "saved" | "itinerary" | "routes" | "profile";
 
 interface BottomNavigationProps {
   activeTab: TabType;
@@ -11,6 +11,7 @@ interface BottomNavigationProps {
 const tabs = [
   { id: "explore" as TabType, label: "Explore", icon: Compass },
   { id: "saved" as TabType, label: "Saved", icon: Heart },
+  { id: "itinerary" as TabType, label: "Itinerary", icon: MapPin },
   { id: "routes" as TabType, label: "Routes", icon: Route },
   { id: "profile" as TabType, label: "Profile", icon: User },
 ];
