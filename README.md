@@ -74,7 +74,7 @@ flowchart LR
   W[Welcome] --> CS[City Selection]
   CS --> TP[Trip Preferences]
 
-  subgraph Decision[User choice]
+  subgraph Decision [User choice]
     TP -->|Explore on my own| EXP[Explore (Map)]
     TP -->|Auto-generate itinerary| ITN[Itinerary Page]
   end
@@ -85,7 +85,7 @@ flowchart LR
   PL -->|See on Itinerary| ITN
   EXP -->|Create My Itinerary| CH{Has days set?}
   CH -->|Yes| ITN
-  CH -->|No| DAYCHOICE[Pick 1–4 days] --> ITN
+  CH -->|No| DAYCHOICE[Pick 1-4 days] --> ITN
 
   %% -- Itinerary interactions
   ITN --> DS[Day Switcher / Route on Map]
