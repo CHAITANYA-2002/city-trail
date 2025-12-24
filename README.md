@@ -1,123 +1,79 @@
-Got it bhai 👍
-You’re asking for **the entire README code in ONE single file**, nothing else.
-
-Below is the **FULL, FINAL, COPY-PASTE READY `README.md`**
-👉 No missing sections
-👉 No broken Mermaid
-👉 No references to files that don’t exist
-👉 Clean, professional, startup-ready
-
----
-
-````md
 # 🧭 City Explorer
 
-City Explorer is a **mobile-first, map-based city discovery application** built with **React + TypeScript**, **Leaflet**, and an **Express development server**.  
-The app helps travelers explore attractions, food, culture, and hidden gems — and automatically generates **day-wise itineraries with real road-based routes**.
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Issues](https://img.shields.io/github/issues/CHAITANYA-2002/city-trail)](https://github.com/CHAITANYA-2002/city-trail/issues)
 
-🚀 **Phase 1 launch city:** Jaipur  
-📱 **Target platforms:** Play Store & iOS App Store
+**City Explorer** is a mobile-first, map-based city discovery application built with **React + TypeScript**, **Leaflet**, and a lightweight **Express** backend. It helps travelers find attractions, food, and shopping, then generates **day-wise itineraries** (1–4 days) with road-accurate routes.
 
 ---
 
-## ✨ Key Features
-
-### 🗺️ Map-First Experience
-- Interactive map powered by **Leaflet**
-- Smooth pan, zoom, and marker interactions
-- Clean, mobile-friendly UI
-
-### 🔍 Smart Discovery
-- Search places, food, and attractions
-- Filter by categories:
-  - History
-  - Food Trails
-  - Shopping
-  - Nature
-  - Culture & Experiences
-  - Events
-  - Popular Places
-  - Hidden Gems
-
-### 📍 Advanced Map Markers
-- Category-based markers
-- Numbered itinerary pins
-- Place name labels and visual hierarchy
-- User location marker
-
-### 🧭 Itinerary Generator
-- Auto-generated itineraries for **1–4 days**
-- Day-wise travel plan
-- Switch days directly on the map
-- Real road-based routes (not straight lines)
-
-### 🛣️ Real Road Routing
-- Uses **OSRM (Open Source Routing Machine)**
-- Routes follow actual roads
-- Polylines drawn between itinerary stops
-
-### 💾 Lightweight State Persistence
-- Uses `sessionStorage`
-- No heavy global state libraries
-- Fast and reliable navigation flow
+## Table of contents
+- [🧭 City Explorer](#-city-explorer)
+  - [Table of contents](#table-of-contents)
+  - [Quick demo](#quick-demo)
+  - [Features](#features)
+  - [Quick start](#quick-start)
+  - [Architecture \& file tree](#architecture--file-tree)
+  - [Application flow](#application-flow)
+  - [API endpoints](#api-endpoints)
+  - [Development notes](#development-notes)
+  - [Contributing](#contributing)
+  - [Security](#security)
+  - [License \& contact](#license--contact)
 
 ---
 
-## 🧠 Application Flow
+## Quick demo
 
-```text
-Welcome Screen
-   ↓
-City Selection
-   ↓
-Trip Preferences
-   ├─ Explore on my own
-   │    ↓
-   │  Explore Map
-   │    ├─ Search
-   │    ├─ Category Filters
-   │    └─ Create Itinerary
-   │         ↓
-   │      Itinerary Page
-   │
-   └─ Auto-generate Itinerary
-        ↓
-     Itinerary Page
-        ↓
-     Map with Day Switcher
-````
+> Use the app to pick a city (Jaipur), choose "Explore on my own" or "Create itinerary", search places, filter by categories, and press **Create My Itinerary** to generate a day-wise plan.
+
+_Screenshots (replace these placeholders with real images from `client/attached_assets`):_
+
+![Map view placeholder](client/attached_assets/Pasted-Create-a-mobile-travel-and-real-time-city-discovery-app_1765992926099.txt)
+
+![Itinerary view placeholder](client/attached_assets/Pasted-Create-a-mobile-travel-and-real-time-city-discovery-app_1765992983268.txt)
 
 ---
 
-## 🏗️ Architecture Overview
+## Features
+- Searchable points of interest (server locations + itinerary stops)
+- Category filters (History, Food, Shopping, Nature, Culture, Events, Popular, Hidden)
+- Color-coded markers and numbered itinerary pins
+- Itinerary generation for **1–4 days**, with day switcher
+- Road-following routes (OSRM) drawn as vibrant blue polylines
+- Simple persistence via `sessionStorage` for `selectedCity`, `tripDays`, `exploreMode`
 
-```text
-Frontend (React + TypeScript)
- ├─ Pages (Routing & Screens)
- ├─ Components (Map, Filters, Itinerary UI)
- ├─ Hooks (User location, Mobile detection)
- ├─ Data (Jaipur itinerary dataset)
- └─ Tailwind CSS (UI styling)
+---
 
-Backend (Express)
- ├─ Cities API
- ├─ Locations API
- ├─ Search API
- └─ Vite middleware (dev)
+## Quick start
+
+```bash
+# Install
+npm install
+
+# Development (Express server + Vite)
+npm run dev
+
+# Production build
+npm run build
+npm start
+
+# TypeScript checks
+npm run check
 ```
 
+Open http://127.0.0.1:5000 (default) after starting the dev server.
+
 ---
 
-## 📁 Project Structure
+## Architecture & file tree
 
-```text
+```
 .
 ├─ server/
-│  ├─ index.ts        # Express server entry
+│  ├─ index.ts        # Express server entry (dev + prod)
 │  ├─ routes.ts       # API endpoints
-│  ├─ storage.ts      # Sample data
+│  ├─ storage.ts      # sample data / data access
 │  └─ vite.ts         # Vite middleware
-│
 ├─ client/
 │  ├─ index.html
 │  └─ src/
@@ -125,178 +81,102 @@ Backend (Express)
 │     ├─ App.tsx
 │     ├─ pages/
 │     │  ├─ Home.tsx
-│     │  ├─ CitySelectionPage.tsx
-│     │  ├─ TripPreferencePage.tsx
 │     │  ├─ MapPage.tsx
 │     │  └─ ItineraryPage.tsx
-│     │
 │     ├─ components/
 │     │  ├─ MapView.tsx
-│     │  ├─ ItineraryPreview.tsx
-│     │  ├─ DaySwitcher.tsx
-│     │  ├─ CategoryFilters.tsx
-│     │  └─ ui/
-│     │
-│     ├─ hooks/
-│     │  ├─ use-mobile-location.ts
-│     │  └─ use-mobile.tsx
-│     │
+│     │  ├─ SearchBar.tsx
+│     │  └─ CategoryFilters.tsx
 │     ├─ data/
 │     │  └─ jaipurItinerary.ts
-│     │
 │     └─ index.css
-│
-├─ shared/
-│  └─ schema.ts       # Category & model definitions
-│
-├─ package.json
-└─ README.md
+└─ shared/
+   └─ schema.ts
 ```
 
 ---
 
-## 🧭 How the App Works
+## Application flow
 
-### 1️⃣ City Selection
+```mermaid
+flowchart LR
+  W[Welcome] --> CS[City Selection]
+  CS --> TP[Trip Preferences]
 
-User selects a city (Jaipur in Phase 1).
+  subgraph Decision [User choice]
+    TP -->|Explore on my own| EXP[Explore (Map)]
+    TP -->|Auto-generate itinerary| ITN[Itinerary Page]
+  end
 
-### 2️⃣ Trip Preferences
+  EXP --> SEARCH[Search & Category Filters]
+  SEARCH --> PL[Select Place / Marker]
+  PL -->|See on Itinerary| ITN
 
-* Select number of days (1–4)
-* Choose:
+  EXP -->|Create My Itinerary| CH{Has days set?}
+  CH -->|Yes| ITN
+  CH -->|No| DAYCHOICE[Pick 1-4 days] --> ITN
 
-  * Explore on your own
-  * Auto-generate itinerary
+  ITN --> DS[Day Switcher / Route on Map]
+  DS --> MAPROUTE[OSRM route / Polyline]
+  ITN --> CHANGE[Change my plan]
+  CHANGE --> CS
+  CHANGE --> DAYCHOICE
 
-### 3️⃣ Explore Mode
+  subgraph Data [Data & Services]
+    LOC[Server Locations / DB]
+    ITD[Itinerary Data (jaipurItinerary.ts)]
+    OSRM[OSRM Directions API]
+  end
 
-* Browse places on the map
-* Search & filter categories
-* Tap markers for details
-* Create itinerary anytime
-
-### 4️⃣ Itinerary Mode
-
-* Full day-wise itinerary view
-* Switch days on map
-* Numbered markers + route
-* Change plan anytime
-
----
-
-## 🛣️ Routing & Directions
-
-* Powered by **OSRM**
-* API:
-
-  ```
-  https://router.project-osrm.org
-  ```
-* Ensures:
-
-  * Road-accurate navigation
-  * Realistic travel paths
-  * Better user trust
-
-> Google Maps integration is planned in later phases.
-
----
-
-## 💾 Session Storage Keys
-
-```text
-selectedCity   → Selected city object
-tripDays       → Number of days (1–4)
-exploreMode    → "map" | "itinerary"
+  LOC --> EXP
+  ITD --> EXP
+  ITD --> ITN
+  OSRM --> MAPROUTE
 ```
 
 ---
 
-## 🔧 Tech Stack
-
-### Frontend
-
-* React
-* TypeScript
-* Vite
-* Tailwind CSS
-* React Router
-* Leaflet
-
-### Backend
-
-* Express
-* Vite middleware
-
-### Maps & Routing
-
-* OpenStreetMap
-* OSRM
-
-### UI
-
-* Radix UI
-* Lucide Icons
+## API endpoints
+- GET `/api/cities` — list cities
+- GET `/api/cities/:id` — city detail
+- GET `/api/categories` — list categories
+- GET `/api/locations?cityId=...&category=...` — locations list
+- GET `/api/search?cityId=...&q=...` — text search
 
 ---
 
-## ⚡ Development
-
-### Install dependencies
-
-```bash
-npm install
-```
-
-### Start development server
-
-```bash
-npm run dev
-```
-
-Open in browser:
-
-```
-http://127.0.0.1:5000
-```
+## Development notes
+- Map routes are fetched from OSRM: `https://router.project-osrm.org/route/v1/driving/{coords}`
+- Itinerary data (sample) lives in `client/src/data/jaipurItinerary.ts`
+- Session keys: `selectedCity`, `tripDays`, `exploreMode`
+- Optional: set `PORT` env var to change dev server port (default 5000)
 
 ---
 
-## 📦 Production Build
+## Contributing
+1. Fork the repo
+2. Create branch `feature/your-feature`
+3. Add tests / commit messages
+4. Open a PR and describe the change
 
-```bash
-npm run build
-npm start
-```
-
----
-
-## 🚀 Roadmap
-
-* ✅ Jaipur (Phase 1)
-* ⏳ Multi-city expansion
-* ⏳ Smart itinerary optimization
-* ⏳ Google Maps fallback
-* ⏳ User accounts & saved trips
-* ⏳ Offline mode (PWA)
+Helpful contributions:
+- Better marker icons / legend
+- Server-side itinerary optimization
+- Google Maps provider fallback
 
 ---
 
-## 📜 License
-
-MIT License
-
----
-
-## 👨‍💻 Maintainer
-
-**Chaitanya & Aryan**
-Founder – City Explorer
-Launching soon on Play Store & iOS
+## Security
+- Never commit API keys or secrets. Use `.env` and add it to `.gitignore`.
+- For public deployments, ensure API keys and billing are configured securely.
 
 ---
 
-✨ City Explorer is built to make city travel **simple, visual, and intelligent**.
+## License & contact
+- **License:** MIT
+- **Maintainers:** Chaitanya & Aryan — open to help with repo setup, Google Maps integration, and server-side itinerary
 
-```
+---
+
+_Powered with ❤️ for travelers._
+
