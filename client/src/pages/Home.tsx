@@ -163,6 +163,7 @@ useEffect(() => {
 
   const handleSelectCity = (city: City) => {
     setSelectedCity(city);
+    sessionStorage.setItem("selectedCity", JSON.stringify(city));
     setScreen("trip-preference");
   };
 
@@ -214,6 +215,10 @@ useEffect(() => {
         onContinue={({ days, mode }) => {
           setTripDays(days);
           setExploreMode(mode);
+          sessionStorage.setItem("exploreMode", mode);
+          if (days !== null) {
+            sessionStorage.setItem("tripDays", String(days));
+          }
           setScreen("explore");
         }}
       />
@@ -389,6 +394,7 @@ useEffect(() => {
         activeTab={activeTab}
         onTabChange={(tab) => {
           if (tab === "itinerary") {
+            sessionStorage.setItem("exploreMode", "itinerary");
             navigate("/itinerary");
             return;
           }
