@@ -9,9 +9,11 @@ import {
   Sparkles, 
   Calendar, 
   Star, 
-  Gem 
+  Gem,
+  Compass
 } from "lucide-react";
 import { CATEGORIES, type CategoryType } from "@shared/schema";
+import { useTrip } from "@/contexts/TripContext";
 
 const iconMap: Record<string, any> = {
   Landmark,
@@ -21,15 +23,12 @@ const iconMap: Record<string, any> = {
   Sparkles,
   Calendar,
   Star,
-  Gem
+  Gem,
+  Compass
 };
 
-interface CategoryFiltersProps {
-  selectedCategory: CategoryType | null;
-  onSelectCategory: (category: CategoryType | null) => void;
-}
-
-export function CategoryFilters({ selectedCategory, onSelectCategory }: CategoryFiltersProps) {
+export function CategoryFilters() {
+  const { selectedCategory, setSelectedCategory } = useTrip();
   const scrollRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -43,41 +42,43 @@ export function CategoryFilters({ selectedCategory, onSelectCategory }: Category
   
   const handleClick = (categoryId: CategoryType) => {
     if (selectedCategory === categoryId) {
-      onSelectCategory(null);
+      setSelectedCategory(null);
     } else {
-      onSelectCategory(categoryId);
+      setSelectedCategory(categoryId);
     }
   };
   
   return (
     <div 
       ref={scrollRef}
-      className="flex gap-2 overflow-x-auto scrollbar-hide px-4 py-2"
-      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      className="flex gap-3 overflow-x-auto no-scrollbar px-6 py-4"
     >
       {CATEGORIES.map((category) => {
-        const Icon = iconMap[category.icon];
+        const Icon = iconMap[category.icon] || Compass;
         const isSelected = selectedCategory === category.id;
         
         return (
           <motion.div
             key={category.id}
+            whileHover={{ y: -2 }}
             whileTap={{ scale: 0.95 }}
             data-category={category.id}
           >
             <Badge
               variant={isSelected ? "default" : "secondary"}
               className={`
-                flex items-center gap-1.5 px-3 py-1.5 cursor-pointer whitespace-nowrap
-                transition-colors text-sm font-medium
-                ${isSelected ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}
+                flex items-center gap-2.5 px-6 py-3 cursor-pointer whitespace-nowrap
+                transition-all duration-500 text-[10px] font-black uppercase tracking-[0.2em]
+                rounded-2xl border-2
+                ${isSelected 
+                  ? 'bg-primary text-white border-primary shadow-luxury' 
+                  : 'bg-white text-muted-foreground border-primary/5 hover:border-primary/20 hover:text-foreground shadow-sm'}
               `}
               onClick={() => handleClick(category.id)}
-              data-testid={`filter-category-${category.id}`}
               aria-label={`Filter by ${category.name}`}
               aria-pressed={isSelected}
             >
-              {Icon && <Icon className="w-3.5 h-3.5" />}
+              <Icon className={`w-3.5 h-3.5 ${isSelected ? 'text-accent shadow-glow' : 'text-primary/40'}`} />
               {category.name}
             </Badge>
           </motion.div>

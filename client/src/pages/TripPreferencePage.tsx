@@ -1,12 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { TripPreference } from "@/components/TripPreference";
-import type { City } from "@shared/schema";
+import { useTrip } from "@/contexts/TripContext";
 
 export default function TripPreferencePage() {
   const navigate = useNavigate();
-  const city: City | null = JSON.parse(
-    sessionStorage.getItem("selectedCity") || "null"
-  );
+  const { city, exploreMode } = useTrip();
 
   if (!city) {
     navigate("/cities");
@@ -17,15 +15,10 @@ export default function TripPreferencePage() {
     <TripPreference
       cityName={city.name}
       onBack={() => navigate(-1)}
-      onContinue={({ days, mode }) => {
-        // store exploreMode so other pages can behave accordingly
-        sessionStorage.setItem("exploreMode", mode);
-        if (days !== null) sessionStorage.setItem("tripDays", String(days));
-
-        if (mode === "itinerary") {
-          navigate("/itinerary");
+      onContinue={() => {
+        if (exploreMode === "custom") {
+          navigate("/planner");
         } else {
-          // Continue to map for explore mode
           navigate("/map");
         }
       }}

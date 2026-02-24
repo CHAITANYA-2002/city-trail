@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { MapPin, Compass, ArrowRight } from "lucide-react";
+import { Compass, ArrowRight, Sparkles, Globe } from "lucide-react";
 
 interface WelcomeScreenProps {
   onGetStarted: () => void;
@@ -8,91 +7,101 @@ interface WelcomeScreenProps {
 
 export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-accent/20 flex flex-col items-center justify-between px-6 py-12 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/3 rounded-full blur-2xl" />
-      </div>
-      
+    <div className="min-h-screen relative flex flex-col items-center justify-end px-8 pb-16 overflow-hidden bg-[#0C1218]">
+      {/* Cinematic Background Layer */}
       <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="flex-1 flex flex-col items-center justify-center z-10"
+        initial={{ scale: 1.1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 0.6 }}
+        transition={{ duration: 2, ease: "easeOut" }}
+        className="absolute inset-0 z-0"
       >
+        <img 
+          src="/images/welcome-bg.png" 
+          alt="Cinematic Background" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0C1218] via-[#0C1218]/40 to-transparent" />
+      </motion.div>
+
+      {/* Hero Content */}
+      <div className="relative z-10 w-full max-w-lg text-center">
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-          className="w-24 h-24 bg-primary rounded-3xl flex items-center justify-center mb-8 shadow-lg"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: "backOut" }}
+          className="mb-8 flex justify-center"
         >
-          <Compass className="w-12 h-12 text-primary-foreground" />
+          <div className="relative">
+            <div className="w-20 h-20 rounded-[2rem] bg-primary flex items-center justify-center shadow-2xl shadow-primary/40 rotate-12 rotate-[-12deg]">
+              <Compass className="w-10 h-10 text-white" />
+            </div>
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              className="absolute -inset-4 border border-white/10 rounded-full"
+            />
+          </div>
         </motion.div>
-        
-        <motion.h1 
-          initial={{ opacity: 0, y: 20 }}
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="text-4xl font-bold text-foreground mb-3 tracking-tight"
-          data-testid="text-app-title"
+          transition={{ delay: 0.3, duration: 0.8 }}
         >
-          CityTrail
-        </motion.h1>
-        
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="text-lg text-muted-foreground text-center max-w-xs leading-relaxed"
-          data-testid="text-app-tagline"
-        >
-          Discover the hidden gems and iconic landmarks of India's most vibrant cities
-        </motion.p>
-        
+          <h1 className="text-6xl font-serif text-white mb-4 tracking-tight">
+            City<span className="text-primary italic">Trail</span>
+          </h1>
+          <p className="text-lg text-white/70 font-sans leading-relaxed mb-12 max-w-sm mx-auto">
+            Experience the heartbeat of India's most vibrant cities through curated paths and hidden wonders.
+          </p>
+        </motion.div>
+
+        {/* Feature Pills */}
         <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-          className="mt-12 flex items-center gap-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+          className="flex flex-wrap justify-center gap-3 mb-12"
         >
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center mb-2">
-              <MapPin className="w-5 h-5 text-accent-foreground" />
+          {[
+            { icon: Globe, label: "Heritage" },
+            { icon: Sparkles, label: "Immersive" },
+            { icon: Compass, label: "Expert Guided" }
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+              <item.icon className="w-3 h-3 text-accent" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/60">{item.label}</span>
             </div>
-            <span className="text-xs text-muted-foreground">Explore</span>
-          </div>
-          <div className="w-8 h-px bg-border" />
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center mb-2">
-              <Compass className="w-5 h-5 text-accent-foreground" />
-            </div>
-            <span className="text-xs text-muted-foreground">Navigate</span>
-          </div>
+          ))}
         </motion.div>
-      </motion.div>
-      
-      <motion.div 
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7, duration: 0.5 }}
-        className="w-full z-10"
-      >
-        <Button 
-          onClick={onGetStarted}
-          size="lg"
-          className="w-full h-14 text-lg font-semibold gap-2"
-          data-testid="button-get-started"
-          aria-label="Get Started"
+
+        {/* Call to Action */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9, duration: 0.8 }}
         >
-          Get Started
-          <ArrowRight className="w-5 h-5" />
-        </Button>
-        
-        <p className="text-center text-xs text-muted-foreground mt-4">
-          Free to explore, no account required
-        </p>
-      </motion.div>
+          <button
+            onClick={onGetStarted}
+            className="group w-full relative flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-white py-6 rounded-[2rem] font-black text-lg shadow-2xl transition-all active:scale-95 overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+            START YOUR JOURNEY
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </button>
+          
+          <p className="mt-8 text-[11px] font-bold text-white/30 tracking-[0.2em] uppercase">
+            Curated by Travel Connoisseurs
+          </p>
+        </motion.div>
+      </div>
+
+      {/* Bottom Visual Accent */}
+      <motion.div 
+        animate={{ opacity: [0.1, 0.3, 0.1] }}
+        transition={{ duration: 4, repeat: Infinity }}
+        className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-primary/10 to-transparent z-0"
+      />
     </div>
   );
 }
