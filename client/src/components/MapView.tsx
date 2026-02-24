@@ -243,20 +243,11 @@ export function MapView({
 
   const [activeDay, setActiveDay] = useState(1);
   const [activeRoute, setActiveRoute] = useState<[number, number][]>([]);
-  const [selectedLoc, setSelectedLoc] = useState<Location | null>(null);
-
-  // Sync with prop
-  useEffect(() => {
-    if (externalSelectedLoc) {
-      setSelectedLoc(externalSelectedLoc);
-    }
-  }, [externalSelectedLoc]);
-
   // Memoize map view target to prevent reset loops during panning/zooming
   const mapTarget = useMemo(() => {
-    if (selectedLoc) {
+    if (externalSelectedLoc) {
       return {
-        center: [selectedLoc.latitude, selectedLoc.longitude] as [number, number],
+        center: [externalSelectedLoc.latitude, externalSelectedLoc.longitude] as [number, number],
         zoom: 16
       };
     }
@@ -264,7 +255,12 @@ export function MapView({
       center: initialCenter,
       zoom: 13
     };
-  }, [selectedLoc, initialCenter]);
+  }, [externalSelectedLoc, initialCenter]);
+
+  // Memoize positions for FitBounds to prevent render loops
+  const displayPositions = useMemo(() => {
+    return displayLocations.map(l => [l.latitude, l.longitude] as [number, number]);
+  }, [displayLocations]);
   const [routeInfo, setRouteInfo] = useState<{ distance: string; duration: string } | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
   const [currentNavStop, setCurrentNavStop] = useState(0);
@@ -275,18 +271,23 @@ export function MapView({
   const [mapBounds, setMapBounds] = useState<L.LatLngBounds | null>(null);
   const mapRef = useRef<L.Map | null>(null);
 
-  // Track user location
+  // Track user location with frequency throttling
   useEffect(() => {
     if (!navigator.geolocation) return;
     
+    let lastUpdate = 0;
     const watchId = navigator.geolocation.watchPosition(
       (pos) => {
-        setUserLocation([pos.coords.latitude, pos.coords.longitude]);
+        const now = Date.now();
+        if (now - lastUpdate > 5000) { // Throttle to 5s
+          setUserLocation([pos.coords.latitude, pos.coords.longitude]);
+          lastUpdate = now;
+        }
       },
       (err) => {
         console.warn("Location error:", err);
       },
-      { enableHighAccuracy: true }
+      { enableHighAccuracy: false } // Reduce accuracy slightly for performance
     );
 
     return () => navigator.geolocation.clearWatch(watchId);
@@ -296,10 +297,10 @@ export function MapView({
   useEffect(() => {
     setIsNavigating(false);
     setCurrentNavStop(0);
-    setSelectedLoc(null);
+    onLocationSelect?.(null);
     setDiscoveries([]);
     setShowSearchArea(false);
-  }, [activeDay, exploreMode]);
+  }, [activeDay, exploreMode, onLocationSelect]);
 
   const fetchAreaDiscoveries = async () => {
     if (!mapBounds) return;
@@ -473,7 +474,7 @@ function MapEvents({ onMoveEnd, mapRef }: MapEventsProps) {
     <div className="relative w-full h-full bg-[#FDFBF7] overflow-hidden compass-mode">
       {/* Selected Location: Heritage Card */}
       <AnimatePresence>
-        {selectedLoc && (
+        {externalSelectedLoc && (
           <motion.div
             initial={{ y: 200, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -484,25 +485,25 @@ function MapEvents({ onMoveEnd, mapRef }: MapEventsProps) {
             
             <div className="relative flex items-center gap-6">
               <div className="w-24 h-24 rounded-3xl bg-primary/5 overflow-hidden shrink-0 border border-primary/10 shadow-sm transition-transform duration-700 group-hover:scale-105">
-                {selectedLoc.imageUrl ? (
-                  <img src={selectedLoc.imageUrl} className="w-full h-full object-cover" />
+                {externalSelectedLoc.imageUrl ? (
+                  <img src={externalSelectedLoc.imageUrl} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-primary font-serif text-3xl italic">
-                    {selectedLoc.name[0]}
+                    {externalSelectedLoc.name[0]}
                   </div>
                 )}
               </div>
               
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-serif text-2xl text-foreground leading-tight truncate italic">{selectedLoc.name}</h3>
-                  <button onClick={() => setSelectedLoc(null)} className="p-2 hover:bg-muted rounded-full transition-colors">
+                  <h3 className="font-serif text-2xl text-foreground leading-tight truncate italic">{externalSelectedLoc.name}</h3>
+                  <button onClick={() => onLocationSelect?.(null)} className="p-2 hover:bg-muted rounded-full transition-colors">
                     <X className="w-4 h-4 text-muted-foreground" />
                   </button>
                 </div>
                 
                 <div className="flex items-center gap-4 mb-6">
-                  {selectedLoc.id.toString().startsWith('ext-') ? (
+                  {externalSelectedLoc.id.toString().startsWith('ext-') ? (
                     <div className="flex items-center gap-2 bg-secondary/10 text-secondary px-3 py-1 rounded-full text-[9px] font-black tracking-widest uppercase">
                       <Globe className="w-3.5 h-3.5" />
                       Global Discovery
@@ -513,13 +514,13 @@ function MapEvents({ onMoveEnd, mapRef }: MapEventsProps) {
                       {routeInfo.duration} <span className="text-muted-foreground/40">•</span> {routeInfo.distance}
                     </div>
                   ) : (
-                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{selectedLoc.category}</span>
+                    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{externalSelectedLoc.category}</span>
                   )}
                 </div>
                 
                 <div className="flex gap-3">
                   <button 
-                    onClick={() => startNavigation(selectedLoc.latitude, selectedLoc.longitude)}
+                    onClick={() => startNavigation(externalSelectedLoc.latitude, externalSelectedLoc.longitude)}
                     className="flex-1 bg-secondary text-white rounded-2xl py-4 text-[10px] font-black tracking-[0.2em] uppercase shadow-lg shadow-secondary/20 active:scale-95 transition-all overflow-hidden relative group"
                   >
                     <div className="absolute inset-0 bg-white/20 translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
@@ -528,7 +529,7 @@ function MapEvents({ onMoveEnd, mapRef }: MapEventsProps) {
                     </span>
                   </button>
                   <button 
-                    onClick={() => onLocationSelect?.(selectedLoc)}
+                    onClick={() => onLocationSelect?.(externalSelectedLoc)}
                     className="px-6 bg-primary/5 text-primary border border-primary/10 rounded-2xl py-4 text-[10px] font-black tracking-[0.1em] uppercase active:scale-95 transition-all"
                   >
                     DETAILS
@@ -651,10 +652,10 @@ function MapEvents({ onMoveEnd, mapRef }: MapEventsProps) {
         <ChangeView 
           center={mapTarget.center} 
           zoom={mapTarget.zoom}
-          force={!!selectedLoc}
+          force={!!externalSelectedLoc}
         />
         {activeRoute.length > 0 && <FitBounds positions={activeRoute} />}
-        {displayLocations.length > 0 && !selectedLoc && <FitBounds positions={displayLocations.map(l => [l.latitude, l.longitude])} />}
+        {displayPositions.length > 0 && !externalSelectedLoc && <FitBounds positions={displayPositions} />}
 
         {/* User Presence */}
         {userLocation && (
@@ -685,21 +686,21 @@ function MapEvents({ onMoveEnd, mapRef }: MapEventsProps) {
             <Marker
               key={loc.id}
               position={[loc.latitude, loc.longitude]}
-              eventHandlers={{ click: () => setSelectedLoc(loc) }}
+              eventHandlers={{ click: () => onLocationSelect?.(loc) }}
               icon={loc.id.toString().startsWith('ext-') 
-                ? createGlobalDiscoveryMarker(loc, selectedLoc?.id === loc.id)
-                : createCustomMarker(loc, selectedLoc?.id === loc.id)
+                ? createGlobalDiscoveryMarker(loc, externalSelectedLoc?.id === loc.id)
+                : createCustomMarker(loc, externalSelectedLoc?.id === loc.id)
               }
             />
           ))}
 
         {/* Floating Selected Focus (for locations not in displayLocations) */}
-        {selectedLoc && !displayLocations.find(l => l.id === selectedLoc.id) && (
+        {externalSelectedLoc && !displayLocations.find(l => l.id === externalSelectedLoc.id) && (
           <Marker
-            position={[selectedLoc.latitude, selectedLoc.longitude]}
-            icon={selectedLoc.id.toString().startsWith('ext-') 
-              ? createGlobalDiscoveryMarker(selectedLoc, true)
-              : createCustomMarker(selectedLoc, true)
+            position={[externalSelectedLoc.latitude, externalSelectedLoc.longitude]}
+            icon={externalSelectedLoc.id.toString().startsWith('ext-') 
+              ? createGlobalDiscoveryMarker(externalSelectedLoc, true)
+              : createCustomMarker(externalSelectedLoc, true)
             }
           />
         )}
@@ -709,9 +710,8 @@ function MapEvents({ onMoveEnd, mapRef }: MapEventsProps) {
           <Marker
             key={loc.id}
             position={[loc.latitude, loc.longitude]}
-            icon={createGlobalDiscoveryMarker(loc, selectedLoc?.id === loc.id)}
+            icon={createGlobalDiscoveryMarker(loc, externalSelectedLoc?.id === loc.id)}
             eventHandlers={{ click: () => {
-              setSelectedLoc(loc);
               onDiscoverySelected?.(loc);
             }}}
           />
@@ -730,10 +730,9 @@ function MapEvents({ onMoveEnd, mapRef }: MapEventsProps) {
             <Marker
               key={`itin-${i}`}
               position={[lat, lng]}
-              icon={itineraryIcon(i + 1, stop.title, selectedLoc?.id === loc?.id, loc?.imageUrl || undefined)}
+              icon={itineraryIcon(i + 1, stop.title, externalSelectedLoc?.id === loc?.id, loc?.imageUrl || undefined)}
               eventHandlers={{ click: () => {
                 if (loc) {
-                  setSelectedLoc(loc);
                   onLocationSelect?.(loc);
                 }
               }}}
@@ -759,7 +758,7 @@ function MapEvents({ onMoveEnd, mapRef }: MapEventsProps) {
 
       {/* Synchronized Itinerary Controller */}
       <AnimatePresence>
-        {(exploreMode === "itinerary" || exploreMode === "custom") && !selectedLoc && (
+        {(exploreMode === "itinerary" || exploreMode === "custom") && !externalSelectedLoc && (
           <motion.div 
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}

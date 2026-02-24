@@ -106,14 +106,14 @@
     @apply transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-luxury hover:border-primary/20;
   }
 
-  /* Compass Map Specializations */
+  /* Compass Map Specializations - Simplified for performance */
   .map-compass-mode {
-    filter: sepia(0.15) contrast(1.1) saturate(0.9);
-    @apply transition-all duration-1000;
+    filter: sepia(0.1);
+    @apply transition-opacity duration-700;
   }
 
   .dark .map-compass-mode {
-    filter: brightness(0.6) invert(1) hue-rotate(180deg) saturate(0.5) contrast(1.2);
+    filter: brightness(0.7) contrast(1.1);
   }
 
   /* Heritage Divider */

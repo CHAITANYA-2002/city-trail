@@ -45,7 +45,7 @@ export default function MapPage() {
     enabled: !!city,
   });
 
-  // Build combined locations list
+  // Build combined locations list - Memoized to prevent re-render cascades
   const combinedLocations: Location[] = useMemo(() => {
     const locationsMap = new Map<string, Location>();
 
