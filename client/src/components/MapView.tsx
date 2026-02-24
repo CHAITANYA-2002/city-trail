@@ -257,6 +257,14 @@ export function MapView({
     };
   }, [externalSelectedLoc, initialCenter]);
 
+  const displayLocations = useMemo(() => {
+    if (exploreMode === "map") {
+      if (!selectedCategory) return locations;
+      return locations.filter(l => l.category === selectedCategory);
+    }
+    return [];
+  }, [exploreMode, locations, selectedCategory]);
+
   // Memoize positions for FitBounds to prevent render loops
   const displayPositions = useMemo(() => {
     return displayLocations.map(l => [l.latitude, l.longitude] as [number, number]);
@@ -371,13 +379,7 @@ function MapEvents({ onMoveEnd, mapRef }: MapEventsProps) {
   return null;
 }
 
-  const displayLocations = useMemo(() => {
-    if (exploreMode === "map") {
-      if (!selectedCategory) return locations;
-      return locations.filter(l => l.category === selectedCategory);
-    }
-    return [];
-  }, [exploreMode, locations, selectedCategory]);
+
 
   const itinerary = useMemo(() => {
     if (exploreMode === "itinerary" && days) {
@@ -427,8 +429,8 @@ function MapEvents({ onMoveEnd, mapRef }: MapEventsProps) {
 
   useEffect(() => {
     if (exploreMode === "map") {
-      if (selectedLoc && userLocation) {
-        fetchRoute([userLocation, [selectedLoc.latitude, selectedLoc.longitude]]);
+      if (externalSelectedLoc && userLocation) {
+        fetchRoute([userLocation, [externalSelectedLoc.latitude, externalSelectedLoc.longitude]]);
       } else {
         setActiveRoute([]);
         setRouteInfo(null);
@@ -453,7 +455,7 @@ function MapEvents({ onMoveEnd, mapRef }: MapEventsProps) {
     }
 
     fetchRoute(points);
-  }, [exploreMode, currentDayData, customItinerary, activeDay, userLocation, isNavigating, currentNavStop, selectedLoc, fetchRoute]);
+  }, [exploreMode, currentDayData, customItinerary, activeDay, userLocation, isNavigating, currentNavStop, externalSelectedLoc, fetchRoute]);
 
   const handleLocate = () => {
     if (!userLocation) {
@@ -802,7 +804,7 @@ interface MapViewProps {
   center: [number, number];
   locations?: Location[];
   selectedCategory?: string | null;
-  onLocationSelect?: (location: Location) => void;
+  onLocationSelect?: (location: Location | null) => void;
   mode: "map" | "itinerary";
   selectedLoc?: Location | null;
   onDiscoverySelected?: (loc: Location) => void;
