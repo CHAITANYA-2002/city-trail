@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { MapView } from "@/components/MapView";
@@ -203,9 +203,11 @@ export default function MapPage() {
     }
   };
 
-  const handleDiscoverySelect = (loc: Location) => {
+  const handleDiscoverySelect = useCallback((loc: Location) => {
     setSelectedLocation(loc);
-  };
+  }, []);
+
+  const cityCenter = useMemo((): [number, number] => [city.latitude, city.longitude], [city.latitude, city.longitude]);
 
   return (
     <div className="flex flex-col h-screen bg-heritage-sand overflow-hidden">
@@ -273,10 +275,9 @@ export default function MapPage() {
         </div>
       </div>
 
-      {/* COMPASS MAP CONTAINER */}
       <div className="flex-1 relative">
         <MapView
-          center={[city.latitude, city.longitude]}
+          center={cityCenter}
           locations={combinedLocations}
           selectedCategory={selectedCategory}
           onLocationSelect={setSelectedLocation}

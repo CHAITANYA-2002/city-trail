@@ -9,7 +9,6 @@ import DayPlannerPage from "@/pages/DayPlannerPage";
 import NotFound from "@/pages/not-found";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
-
 import { TripProvider } from "@/contexts/TripContext";
 
 export default function App() {
@@ -19,38 +18,20 @@ export default function App() {
     <TooltipProvider>
       <Toaster />
       <TripProvider>
-        <AnimatePresence mode="wait">
+        {/*
+          Key fix: AnimatePresence wraps individual page wrappers keyed by
+          pathname. Using mode="sync" (not "wait") so the new page starts
+          mounting immediately instead of waiting for the old exit to finish.
+          This prevents Leaflet / heavy components from blocking navigation.
+        */}
+        <AnimatePresence mode="sync">
           <Routes location={location} key={location.pathname}>
-            <Route path="/" element={
-              <PageWrapper>
-                <Home />
-              </PageWrapper>
-            } />
-            <Route path="/cities" element={
-              <PageWrapper>
-                <CitySelectionPage />
-              </PageWrapper>
-            } />
-            <Route path="/trip" element={
-              <PageWrapper>
-                <TripPreferencePage />
-              </PageWrapper>
-            } />
-            <Route path="/itinerary" element={
-              <PageWrapper>
-                <ItineraryPage />
-              </PageWrapper>
-            } />
-            <Route path="/map" element={
-              <PageWrapper>
-                <MapPage />
-              </PageWrapper>
-            } />
-            <Route path="/planner" element={
-              <PageWrapper>
-                <DayPlannerPage />
-              </PageWrapper>
-            } />
+            <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+            <Route path="/cities" element={<PageWrapper><CitySelectionPage /></PageWrapper>} />
+            <Route path="/trip" element={<PageWrapper><TripPreferencePage /></PageWrapper>} />
+            <Route path="/itinerary" element={<PageWrapper><ItineraryPage /></PageWrapper>} />
+            <Route path="/map" element={<PageWrapper><MapPage /></PageWrapper>} />
+            <Route path="/planner" element={<PageWrapper><DayPlannerPage /></PageWrapper>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AnimatePresence>
@@ -62,12 +43,12 @@ export default function App() {
 function PageWrapper({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 1.02 }}
-      transition={{ 
-        duration: 0.8, 
-        ease: [0.19, 1, 0.22, 1] // Prestigious easeOutExpo
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{
+        duration: 0.25,
+        ease: "easeInOut",
       }}
       className="w-full h-full overflow-hidden"
     >

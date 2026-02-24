@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { TripPreference } from "@/components/TripPreference";
 import { useTrip } from "@/contexts/TripContext";
 
@@ -7,8 +7,7 @@ export default function TripPreferencePage() {
   const { city, exploreMode } = useTrip();
 
   if (!city) {
-    navigate("/cities");
-    return null;
+    return <Navigate to="/cities" replace />;
   }
 
   return (

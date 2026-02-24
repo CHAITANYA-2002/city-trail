@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { type Location } from "@shared/schema";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
@@ -471,6 +471,10 @@ type Step =
 export default function DayPlannerPage() {
   const navigate = useNavigate();
   const { setDayPlan, setCustomItinerary, setExploreMode, setDays, city } = useTrip();
+
+  if (!city) {
+    return <Navigate to="/cities" replace />;
+  }
 
   const { data: dbLocations = [] } = useQuery<Location[]>({
     queryKey: ["/api/locations", { cityId: city?.id }],

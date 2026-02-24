@@ -58,18 +58,18 @@ export function LocationDetail({ location, distance, onBack, onNavigate, onExplo
         <motion.div
           initial={{ scale: 1.2, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
-          className="w-full h-full"
+          transition={{ duration: 1.8, ease: [0.19, 1, 0.22, 1] }}
+          className="absolute inset-0 w-full h-full"
         >
           {location.imageUrl ? (
-            <img 
-              src={location.imageUrl} 
+            <img
+              src={location.imageUrl}
               alt={location.name}
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-primary/10">
-              <MapPin className="w-16 h-16 text-primary/20" />
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-secondary via-primary/80 to-foreground">
+              <span className="font-serif text-9xl italic text-white/20">{location.name[0]}</span>
             </div>
           )}
         </motion.div>
@@ -127,7 +127,14 @@ export function LocationDetail({ location, distance, onBack, onNavigate, onExplo
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="bg-white rounded-[3.5rem] p-8 sm:p-12 shadow-luxury border-2 border-primary/5"
+          className="relative rounded-[3.5rem] p-8 sm:p-12 shadow-2xl overflow-hidden"
+          style={{
+            background: "rgba(253,251,247,0.78)",
+            backdropFilter: "blur(28px) saturate(1.5)",
+            WebkitBackdropFilter: "blur(28px) saturate(1.5)",
+            border: "1px solid rgba(255,255,255,0.38)",
+            boxShadow: "0 32px 80px rgba(0,0,0,0.14), 0 0 0 1px rgba(212,175,55,0.10), inset 0 1px 0 rgba(255,255,255,0.55)",
+          }}
         >
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-10">
             <div className="flex-1">
@@ -163,7 +170,16 @@ export function LocationDetail({ location, distance, onBack, onNavigate, onExplo
           </div>
           
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-12">
-            <div className="p-6 rounded-[2rem] bg-heritage-sand/50 border-2 border-primary/5 text-center transition-transform hover:scale-[1.02]">
+            <div
+              className="p-6 rounded-[2rem] text-center transition-all duration-300 hover:scale-[1.03] hover:-translate-y-1 group"
+              style={{
+                background: "rgba(253,251,247,0.65)",
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
+                border: "1px solid rgba(212,175,55,0.12)",
+                boxShadow: "0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.5)",
+              }}
+            >
               <Clock className="w-6 h-6 mx-auto mb-3 text-primary opacity-60" />
               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Curation Hours</p>
               <p className="font-serif text-sm italic text-foreground">
@@ -174,7 +190,16 @@ export function LocationDetail({ location, distance, onBack, onNavigate, onExplo
               </p>
             </div>
             
-            <div className="p-6 rounded-[2rem] bg-heritage-sand/50 border-2 border-primary/5 text-center transition-transform hover:scale-[1.02]">
+            <div
+              className="p-6 rounded-[2rem] text-center transition-all duration-300 hover:scale-[1.03] hover:-translate-y-1"
+              style={{
+                background: "rgba(253,251,247,0.65)",
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
+                border: "1px solid rgba(212,175,55,0.12)",
+                boxShadow: "0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.5)",
+              }}
+            >
               <IndianRupee className="w-6 h-6 mx-auto mb-3 text-secondary opacity-60" />
               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Access Fee</p>
               <p className="font-serif text-sm italic text-foreground">
@@ -182,7 +207,16 @@ export function LocationDetail({ location, distance, onBack, onNavigate, onExplo
               </p>
             </div>
             
-            <div className="p-6 rounded-[2rem] bg-heritage-sand/50 border-2 border-primary/5 text-center transition-transform hover:scale-[1.02] col-span-2 sm:col-span-1">
+            <div
+              className="p-6 rounded-[2rem] text-center transition-all duration-300 hover:scale-[1.03] hover:-translate-y-1 col-span-2 sm:col-span-1"
+              style={{
+                background: "rgba(253,251,247,0.65)",
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
+                border: "1px solid rgba(212,175,55,0.12)",
+                boxShadow: "0 4px 24px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.5)",
+              }}
+            >
               <Navigation className="w-6 h-6 mx-auto mb-3 text-accent opacity-60" />
               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Proximity</p>
               <p className="font-serif text-sm italic text-foreground">
@@ -201,30 +235,6 @@ export function LocationDetail({ location, distance, onBack, onNavigate, onExplo
             </p>
           </div>
           
-          {/* Gallery - Refined */}
-          {location.gallery && location.gallery.length > 0 && (
-            <div className="mb-12">
-              <div className="flex items-center gap-4 mb-6">
-                <span className="text-[10px] font-black text-secondary uppercase tracking-[0.4em]">Visual Archive</span>
-                <div className="flex-1 h-px bg-secondary/10" />
-              </div>
-              <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
-                {location.gallery.map((img, idx) => (
-                  <motion.div 
-                    key={idx}
-                    whileHover={{ scale: 1.05 }}
-                    className="w-48 h-36 flex-shrink-0 rounded-[2rem] overflow-hidden bg-muted shadow-lg border-2 border-white"
-                  >
-                    <img 
-                      src={img} 
-                      alt={`${location.name} ${idx + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Contact & Meta */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-8 border-t border-primary/5">

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { JAIPUR_ITINERARY } from "@/data/jaipurItinerary";
 import { MapPin, ArrowLeft, Clock, Trash2, Sparkles, Settings2, SearchX, BookOpen, Compass, ArrowUp, ArrowDown } from "lucide-react";
@@ -35,8 +35,7 @@ export default function ItineraryPage() {
   });
 
   if (!city) {
-    navigate("/cities");
-    return null;
+    return <Navigate to="/cities" replace />;
   }
 
   const handleMoveStop = (dayIndex: number, stopIndex: number, direction: "up" | "down") => {
@@ -187,7 +186,6 @@ export default function ItineraryPage() {
                       const stopCat = stop.type?.toLowerCase() || inferCategoryFromTitle(stopTitle);
                       const category = CATEGORIES.find(c => c.id === stopCat);
                       const dbMatch = dbLocations.find(l => l.name === stopTitle);
-                      const displayImg = dbMatch?.imageUrl || stop.imageUrl;
 
                       return (
                         <motion.div 
@@ -201,52 +199,84 @@ export default function ItineraryPage() {
                           <div className="absolute left-4 top-0 bottom-0 w-px bg-primary/10 group-last:h-4" />
                           <div className="absolute left-2.5 top-4 w-3 h-3 rounded-full border-2 border-primary bg-[#FDFBF7] z-10" />
 
-                          <div className="bg-white rounded-[2rem] border border-primary/5 p-6 shadow-sm hover:shadow-luxury hover:-translate-y-1 transition-all duration-500">
-                            <div className="flex justify-between items-start gap-4 mb-4">
-                              <h3 className="text-xl font-serif text-foreground group-hover:text-primary transition-colors leading-tight">
-                                {stopTitle}
-                              </h3>
-                              
-                              {isCustomMode && (
-                                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  {idx > 0 && (
-                                    <button onClick={() => handleMoveStop(dayIdx, idx, "up")} className="p-2 hover:bg-muted rounded-full text-muted-foreground transition-colors"><ArrowUp className="w-3.5 h-3.5" /></button>
-                                  )}
-                                  {idx < day.stops.length - 1 && (
-                                    <button onClick={() => handleMoveStop(dayIdx, idx, "down")} className="p-2 hover:bg-muted rounded-full text-muted-foreground transition-colors"><ArrowDown className="w-3.5 h-3.5" /></button>
-                                  )}
-                                  <button onClick={() => removeLocation(stopTitle)} className="p-2 hover:bg-primary/10 rounded-full text-muted-foreground hover:text-primary transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                          <div className="bg-white rounded-[2rem] border border-primary/5 overflow-hidden shadow-sm hover:shadow-luxury hover:-translate-y-1 transition-all duration-500 group">
+                            {/* Location photo banner */}
+                            {dbMatch?.imageUrl && (
+                              <div className="relative h-36 overflow-hidden">
+                                <img
+                                  src={dbMatch.imageUrl}
+                                  alt={stopTitle}
+                                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                  loading="lazy"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
+                                {/* Time badge on the image */}
+                                {stop.time && (
+                                  <div className="absolute bottom-3 right-4 bg-white/10 backdrop-blur-md border border-white/20 text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em]">
+                                    {stop.time}
+                                  </div>
+                                )}
+                                {/* Stop number badge */}
+                                <div className="absolute top-3 left-4 w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-white font-serif font-bold text-sm shadow-lg">
+                                  {idx + 1}
                                 </div>
-                              )}
-                            </div>
-
-                            {displayImg && (
-                              <div className="mb-6 rounded-2xl overflow-hidden h-48 border border-primary/5 shadow-inner">
-                                <img src={displayImg} alt={stopTitle} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                               </div>
                             )}
 
-                            <p className="text-sm font-sans text-muted-foreground/80 leading-relaxed mb-6 line-clamp-2 italic">
-                              {stop.description || "A chapter waiting to be experienced..."}
-                            </p>
+                            <div className="p-6">
+                              <div className="flex justify-between items-start gap-4 mb-3">
+                                <h3 className="text-xl font-serif text-foreground group-hover:text-primary transition-colors leading-tight">
+                                  {stopTitle}
+                                </h3>
 
-                            <div className="flex flex-wrap items-center gap-4">
-                              {category && (
-                                <span className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full" style={{ backgroundColor: `${category.color}10`, color: category.color }}>
-                                  <div className="w-1 h-1 rounded-full" style={{ backgroundColor: category.color }} />
-                                  {category.name}
-                                </span>
+                                {isCustomMode && (
+                                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {idx > 0 && (
+                                      <button onClick={() => handleMoveStop(dayIdx, idx, "up")} className="p-2 hover:bg-muted rounded-full text-muted-foreground transition-colors"><ArrowUp className="w-3.5 h-3.5" /></button>
+                                    )}
+                                    {idx < day.stops.length - 1 && (
+                                      <button onClick={() => handleMoveStop(dayIdx, idx, "down")} className="p-2 hover:bg-muted rounded-full text-muted-foreground transition-colors"><ArrowDown className="w-3.5 h-3.5" /></button>
+                                    )}
+                                    <button onClick={() => removeLocation(stopTitle)} className="p-2 hover:bg-primary/10 rounded-full text-muted-foreground hover:text-primary transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                                  </div>
+                                )}
+                              </div>
+
+                              <p className="text-sm font-sans text-muted-foreground/80 leading-relaxed mb-5 line-clamp-2 italic">
+                                {stop.description || dbMatch?.shortDescription || "A chapter waiting to be experienced..."}
+                              </p>
+
+                              {stop.notes && (
+                                <div className="mb-5 pl-3 border-l-2 border-accent/30">
+                                  <p className="text-[11px] font-medium text-muted-foreground/70 italic leading-relaxed">
+                                    ✦ {stop.notes}
+                                  </p>
+                                </div>
                               )}
-                              {stop.duration && (
-                                <span className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest">
-                                  <Clock className="w-3 h-3 text-accent" /> {stop.duration}m span
-                                </span>
-                              )}
-                              {stop.time && (
-                                <span className="ml-auto text-[10px] font-black text-accent/40 uppercase tracking-[0.2em]">
-                                  {stop.time}
-                                </span>
-                              )}
+
+                              <div className="flex flex-wrap items-center gap-3">
+                                {category && (
+                                  <span className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full" style={{ backgroundColor: `${category.color}10`, color: category.color }}>
+                                    <div className="w-1 h-1 rounded-full" style={{ backgroundColor: category.color }} />
+                                    {category.name}
+                                  </span>
+                                )}
+                                {stop.duration && (
+                                  <span className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest">
+                                    <Clock className="w-3 h-3 text-accent" /> {stop.duration}m
+                                  </span>
+                                )}
+                                {dbMatch?.entryFee && (
+                                  <span className="ml-auto text-[9px] font-black text-secondary/50 uppercase tracking-widest">
+                                    {dbMatch.entryFee}
+                                  </span>
+                                )}
+                                {!dbMatch?.imageUrl && stop.time && (
+                                  <span className="ml-auto text-[10px] font-black text-accent/40 uppercase tracking-[0.2em]">
+                                    {stop.time}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </motion.div>
@@ -267,13 +297,21 @@ export default function ItineraryPage() {
 
                   <div className="grid grid-cols-1 gap-4">
                     {filteredCustomItin.map((stop, idx) => (
-                      <div key={`gem-${idx}`} className="flex items-center gap-6 p-6 bg-white rounded-3xl border border-secondary/5 group hover:border-secondary/20 transition-all">
-                        <div className="shrink-0 w-10 h-10 rounded-2xl bg-secondary/10 text-secondary flex items-center justify-center font-black text-xs uppercase">{idx + 1}</div>
-                        <div className="flex-1 min-w-0">
+                      <div key={`gem-${idx}`} className="flex items-center gap-6 p-0 bg-white rounded-3xl border border-secondary/5 group hover:border-secondary/20 transition-all overflow-hidden">
+                        {stop.imageUrl ? (
+                          <div className="w-20 h-20 shrink-0 overflow-hidden bg-muted">
+                            <img src={stop.imageUrl} alt={stop.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+                          </div>
+                        ) : (
+                          <div className="w-20 h-20 shrink-0 bg-secondary/10 flex items-center justify-center text-secondary font-black text-xl rounded-l-3xl">{idx + 1}</div>
+                        )}
+                        <div className="flex-1 min-w-0 py-4">
                           <h3 className="font-serif text-lg text-foreground mb-1 truncate">{stop.name}</h3>
                           <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest truncate">{stop.address || stop.category}</p>
                         </div>
-                        <button onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${stop.latitude},${stop.longitude}`, "_blank")} className="px-5 py-2.5 rounded-full border border-secondary/20 text-[10px] font-black text-secondary uppercase tracking-widest hover:bg-secondary hover:text-white transition-all active:scale-95">Path</button>
+                        <div className="pr-5">
+                          <button onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${stop.latitude},${stop.longitude}`, "_blank")} className="px-5 py-2.5 rounded-full border border-secondary/20 text-[10px] font-black text-secondary uppercase tracking-widest hover:bg-secondary hover:text-white transition-all active:scale-95">Path</button>
+                        </div>
                       </div>
                     ))}
                   </div>

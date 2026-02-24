@@ -126,6 +126,118 @@
   .shadow-luxury {
     box-shadow: var(--luxury-shadow);
   }
+
+  /* ─── GLASSMORPHISM VARIANTS ─── */
+  .glass-royal {
+    background: rgba(253, 251, 247, 0.72);
+    backdrop-filter: blur(32px) saturate(1.5);
+    -webkit-backdrop-filter: blur(32px) saturate(1.5);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow:
+      0 24px 64px rgba(0, 0, 0, 0.18),
+      0 0 0 1px rgba(212, 175, 55, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  }
+
+  .glass-dark {
+    background: rgba(30, 39, 46, 0.78);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 24px 64px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .glass-gold {
+    background: rgba(212, 175, 55, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 175, 55, 0.22);
+  }
+
+  /* ─── 3D CARD EFFECTS ─── */
+  .card-3d {
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.6s ease;
+  }
+
+  .card-3d:hover {
+    transform: translateY(-8px) rotateX(2deg) rotateY(-1deg);
+    box-shadow:
+      0 40px 80px rgba(0, 0, 0, 0.2),
+      0 0 0 1px rgba(212, 175, 55, 0.2);
+  }
+
+  .card-3d-sm:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(212, 175, 55, 0.15);
+  }
+
+  /* ─── GOLD SHIMMER SWEEP ─── */
+  @keyframes shimmer-gold {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .shimmer-gold::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(212, 175, 55, 0.18) 50%,
+      transparent 100%
+    );
+    animation: shimmer-gold 2.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* ─── FLOATING ANIMATION ─── */
+  @keyframes float-gentle {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .float-gentle {
+    animation: float-gentle 4s ease-in-out infinite;
+  }
+
+  /* ─── GOLD PULSE (for active markers) ─── */
+  @keyframes pulse-gold {
+    0%, 100% {
+      opacity: 1;
+      box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5);
+    }
+    50% {
+      opacity: 0.7;
+      box-shadow: 0 0 0 8px rgba(212, 175, 55, 0);
+    }
+  }
+
+  /* ─── MAP TILE WARMTH ─── */
+  .heritage-tiles {
+    filter: sepia(0.08) saturate(1.15) contrast(1.02);
+  }
+
+  /* ─── PREMIUM SCROLL BAR ─── */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(188, 74, 60, 0.25);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(188, 74, 60, 0.45);
+  }
 }
 
 
