@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Compass, ArrowRight, Sparkles, Globe } from "lucide-react";
+import { Compass, ArrowRight, Sparkles, Globe, MessageCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface WelcomeScreenProps {
   onGetStarted: () => void;
@@ -13,6 +14,7 @@ const HERO_IMAGES = [
 ];
 
 export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-end px-8 pb-16 overflow-hidden bg-[#0C1218]">
 
@@ -122,6 +124,14 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
           <p className="mt-8 text-[11px] font-bold text-white/30 tracking-[0.2em] uppercase">
             Curated by Travel Connoisseurs
           </p>
+
+          <button
+            onClick={() => navigate("/contact")}
+            className="mt-4 flex items-center justify-center gap-2 mx-auto text-[10px] font-black text-white/40 hover:text-accent uppercase tracking-[0.2em] transition-colors"
+          >
+            <MessageCircle className="w-3 h-3" />
+            Contact Us
+          </button>
         </motion.div>
       </div>
 

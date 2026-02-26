@@ -6,6 +6,7 @@ import TripPreferencePage from "@/pages/TripPreferencePage";
 import ItineraryPage from "@/pages/ItineraryPage";
 import MapPage from "@/pages/MapPage";
 import DayPlannerPage from "@/pages/DayPlannerPage";
+import ContactPage from "@/pages/ContactPage";
 import NotFound from "@/pages/not-found";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="/itinerary" element={<PageWrapper><ItineraryPage /></PageWrapper>} />
             <Route path="/map" element={<PageWrapper><MapPage /></PageWrapper>} />
             <Route path="/planner" element={<PageWrapper><DayPlannerPage /></PageWrapper>} />
+            <Route path="/contact" element={<PageWrapper><ContactPage /></PageWrapper>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AnimatePresence>
